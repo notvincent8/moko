@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-roboto);
+
+  --color-primary-1: oklch(97.9% 0.0015 0);
+
+  --color-orange-1: oklch(97% 0.0026 43.46);
+  --color-orange-2: oklch(95.5% 0.0154 43.46);
+  --color-orange-3: oklch(93.2% 0.0368 43.46);
+  --color-orange-4: oklch(89.3% 0.0811 43.46);
+  --color-orange-5: oklch(86.2% 0.1066 43.46);
+  --color-orange-6: oklch(82.7% 0.11 43.46);
+  --color-orange-7: oklch(77.4% 0.1126 43.46);
+  --color-orange-8: oklch(71.3% 0.1322 43.46);
+  --color-orange-9: oklch(66.2% 0.1946 43.46);
+  --color-orange-10: oklch(62.3% 0.1946 43.46);
+  --color-orange-11: oklch(56% 0.1861 43.46);
+  --color-orange-12: oklch(35% 0.0687 43.46);
+
+  --color-orange-contrast: #fff;
+  --color-orange-surface: color(display-p3 0.9647 0.9255 0.9059 / 0.8);
+  --color-orange-indicator: oklch(66.2% 0.1946 43.46);
+  --color-orange-track: oklch(66.2% 0.1946 43.46);
+
+  --color-gray-1: oklch(96.9% 0.0015 277.7);
+  --color-gray-2: oklch(95.9% 0.003 277.7);
+  --color-gray-3: oklch(93% 0.0045 277.7);
+  --color-gray-4: oklch(90.4% 0.0061 277.7);
+  --color-gray-5: oklch(88.1% 0.0077 277.7);
+  --color-gray-6: oklch(85.7% 0.0093 277.7);
+  --color-gray-7: oklch(82.2% 0.0117 277.7);
+  --color-gray-8: oklch(76.1% 0.016 277.7);
+  --color-gray-9: oklch(61.2% 0.0165 277.7);
+  --color-gray-10: oklch(57.6% 0.0161 277.7);
+  --color-gray-11: oklch(47.1% 0.0139 277.7);
+  --color-gray-12: oklch(24.1% 0.0099 277.7);
+}
