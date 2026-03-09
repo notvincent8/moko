@@ -1,18 +1,19 @@
 import type { Metadata } from "next"
-import { Jersey_25, Roboto } from "next/font/google"
+import { Syne, Plus_Jakarta_Sans } from "next/font/google"
 import type { ReactNode } from "react"
 import "./globals.css"
 
-const jersey = Jersey_25({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-jersey",
-  weight: "400",
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 })
 
-const roboto = Roboto({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-roboto",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
   display: "swap",
 })
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased ${roboto.variable} ${jersey.className} bg-orange-1 text-orange-11`}>
+      <body className={`${jakarta.variable} ${syne.variable} font-sans`}>
         <main className="relative flex h-screen w-full">{children}</main>
       </body>
     </html>

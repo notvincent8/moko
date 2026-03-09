@@ -1,38 +1,128 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
-  --font-display: var(--font-roboto);
+  /* Design System Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-primary-1: oklch(97.9% 0.0015 0);
+  /* Typography */
+  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-display: var(--font-display), system-ui, sans-serif;
 
-  --color-orange-1: oklch(97% 0.0026 43.46);
-  --color-orange-2: oklch(95.5% 0.0154 43.46);
-  --color-orange-3: oklch(93.2% 0.0368 43.46);
-  --color-orange-4: oklch(89.3% 0.0811 43.46);
-  --color-orange-5: oklch(86.2% 0.1066 43.46);
-  --color-orange-6: oklch(82.7% 0.11 43.46);
-  --color-orange-7: oklch(77.4% 0.1126 43.46);
-  --color-orange-8: oklch(71.3% 0.1322 43.46);
-  --color-orange-9: oklch(66.2% 0.1946 43.46);
-  --color-orange-10: oklch(62.3% 0.1946 43.46);
-  --color-orange-11: oklch(56% 0.1861 43.46);
-  --color-orange-12: oklch(35% 0.0687 43.46);
+  /* Core Palette */
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-flame: var(--flame);
 
-  --color-orange-contrast: #fff;
-  --color-orange-surface: color(display-p3 0.9647 0.9255 0.9059 / 0.8);
-  --color-orange-indicator: oklch(66.2% 0.1946 43.46);
-  --color-orange-track: oklch(66.2% 0.1946 43.46);
+  /* Extended Palette */
+  --color-cream-deep: var(--cream-deep);
+  --color-ink-soft: var(--ink-soft);
+  --color-flame-hover: var(--flame-hover);
+  --color-flame-glow: var(--flame-glow);
 
-  --color-gray-1: oklch(96.9% 0.0015 277.7);
-  --color-gray-2: oklch(95.9% 0.003 277.7);
-  --color-gray-3: oklch(93% 0.0045 277.7);
-  --color-gray-4: oklch(90.4% 0.0061 277.7);
-  --color-gray-5: oklch(88.1% 0.0077 277.7);
-  --color-gray-6: oklch(85.7% 0.0093 277.7);
-  --color-gray-7: oklch(82.2% 0.0117 277.7);
-  --color-gray-8: oklch(76.1% 0.016 277.7);
-  --color-gray-9: oklch(61.2% 0.0165 277.7);
-  --color-gray-10: oklch(57.6% 0.0161 277.7);
-  --color-gray-11: oklch(47.1% 0.0139 277.7);
-  --color-gray-12: oklch(24.1% 0.0099 277.7);
+  /* Semantic Colors */
+  --color-primary: var(--flame);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Surface layers */
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+}
+
+:root {
+  /* Typography - Syne for headlines, Plus Jakarta Sans for body */
+  /* These are set via Next.js CSS variables from layout.tsx */
+
+  /* Core Palette - Light Mode */
+  --cream: #FFF8E5;
+  --cream-deep: #F0E6D3;
+  --ink: #000000;
+  --ink-soft: #1C1C1C;
+  --flame: #FF7300;
+  --flame-hover: #E56600;
+  --flame-glow: #FF8F33;
+
+  /* Semantic - Light Mode */
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --muted: #5C5C5C;
+  --muted-foreground: #7A7A7A;
+  --border: rgba(0, 0, 0, 0.10);
+  --border-strong: rgba(0, 0, 0, 0.22);
+
+  /* Surface layers - Light */
+  --surface: rgba(0, 0, 0, 0.03);
+  --surface-elevated: #FFFFFF;
+
+  /* Accent */
+  --accent: var(--flame);
+  --accent-foreground: #FFFFFF;
+}
+
+.dark {
+  /* Core Palette - Dark Mode */
+  --cream: #FFF8E5;
+  --cream-deep: #E8DCCA;
+  --ink: #000000;
+  --ink-soft: #0D0D0D;
+  --flame: #FF7300;
+  --flame-hover: #FF8829;
+  --flame-glow: #FFA050;
+
+  /* Semantic - Dark Mode */
+  --background: var(--ink);
+  --foreground: var(--cream);
+  --muted: #A0A0A0;
+  --muted-foreground: #6E6E6E;
+  --border: rgba(255, 248, 229, 0.10);
+  --border-strong: rgba(255, 248, 229, 0.22);
+
+  /* Surface layers - Dark */
+  --surface: rgba(255, 248, 229, 0.04);
+  --surface-elevated: #161616;
+
+  /* Accent */
+  --accent: var(--flame);
+  --accent-foreground: var(--ink);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Headlines use display font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: var(--flame);
+    color: #FFFFFF;
+  }
+
+  /* Focus ring with flame accent */
+  :focus-visible {
+    outline: 2px solid var(--flame);
+    outline-offset: 2px;
+  }
 }
