@@ -2,6 +2,9 @@ import { NextResponse } from "next/server"
 import client from "@/lib/anthropic"
 import { getEntitySystemPrompt } from "@/lib/moko-prompt"
 
+// Max message length (prevent huge payloads)
+const MAX_MESSAGE_LENGTH = 2000
+
 // Average young adult reading speed: ~250 WPM (~1250 chars/min ≈ 50ms/char)
 // Average young adult typing speed: ~45 WPM (~225 chars/min ≈ 265ms/char)
 
@@ -14,11 +17,16 @@ const readingDelay = (text: string) => wait(clamp(500, text.length * 50, 3000))
 // Compromise: ~30ms/char (feels like typing but doesn't frustrate user)
 // Clamped 300ms - 2000ms
 const typingDelay = (text: string) => wait(clamp(300, text.length * 30, 2000))
+
 export const POST = async (req: Request) => {
   const { message: userMessage, history = [] } = await req.json()
 
-  if (!userMessage) {
+  if (!userMessage || typeof userMessage !== "string") {
     return NextResponse.json({ error: "Message is required" }, { status: 400 })
+  }
+
+  if (userMessage.length > MAX_MESSAGE_LENGTH) {
+    return NextResponse.json({ error: `Message too long. Max ${MAX_MESSAGE_LENGTH} characters.` }, { status: 400 })
   }
   try {
     const stream = client.messages.stream({
