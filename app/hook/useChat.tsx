@@ -1,29 +1,60 @@
-import { startTransition, useCallback, useOptimistic, useState } from "react"
-export type Item = {
+import { startTransition, useCallback, useMemo, useOptimistic, useState } from "react"
+import type { AssistantMessage } from "@/app/component/bubbles/AssistantBubble"
+import type { UserMessage } from "@/app/component/bubbles/UserBubble"
+
+type BaseItem<TRole extends string, TStatus extends string> = {
   id: string
-  message: string
-  role: "user" | "assistant"
-  pending?: boolean // User message waiting for API acknowledgment
-  streaming?: boolean // AI response still receiving chunks
-  error?: boolean // Failed to send
-}
+  content: string
+  role: TRole
+  error?: boolean
+} & Record<TStatus, boolean>
+
+type UserItem = BaseItem<"user", "pending">
+type AssistantItem = BaseItem<"assistant", "streaming">
+type Item = UserItem | AssistantItem
+
+type AssistantUpdates = Partial<Pick<AssistantItem, "content" | "streaming" | "error">>
+
 const useChat = () => {
   const [items, setItems] = useState<Item[]>([])
+  const [isPending, setIsPending] = useState<boolean>(false)
   const [optimisticItems, addOptimisticItem] = useOptimistic<Item[], Item>(items, (current, newItem) => {
     if (current.some((item) => item.id === newItem.id)) {
       return current
     }
     return [...current, newItem]
   })
-  const updateItem = useCallback((id: string, updates: Partial<Item>) => {
-    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...updates } : item)))
+
+  // Memoized + typed for bubble components
+  const userMessages = useMemo<UserMessage[]>(
+    () =>
+      optimisticItems
+        .filter((m): m is UserItem => m.role === "user")
+        .map(({ id, content, pending, error }) => ({ id, content, pending, error })),
+    [optimisticItems],
+  )
+
+  const assistantMessages = useMemo<AssistantMessage[]>(
+    () =>
+      optimisticItems
+        .filter((m): m is AssistantItem => m.role === "assistant")
+        .map(({ id, content, streaming, error }) => ({ id, content, streaming, error })),
+    [optimisticItems],
+  )
+
+  const updateAssistant = useCallback((id: string, updates: AssistantUpdates) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id && item.role === "assistant" ? { ...item, ...updates } : item)),
+    )
   }, [])
 
   const sendMessage = useCallback(
     (message: string) => {
-      const userItem: Item = {
+      setIsPending(true)
+
+      const userItem: UserItem = {
         id: crypto.randomUUID(),
-        message,
+        content: message,
         role: "user",
         pending: true,
       }
@@ -33,9 +64,13 @@ const useChat = () => {
       startTransition(async () => {
         addOptimisticItem(userItem)
 
-        const history = items
-          .filter((item) => !item.error && !item.pending)
-          .map(({ message, role }) => ({ content: message, role }))
+        let history: { content: string; role: "user" | "assistant" }[] = []
+        setItems((prev) => {
+          history = prev
+            .filter((item) => !item.error && !(item.role === "user" && item.pending))
+            .map(({ content, role }) => ({ content, role }))
+          return prev
+        })
 
         try {
           const response = await fetch("/api/chat", {
@@ -72,15 +107,15 @@ const useChat = () => {
                   setItems((prev) => [...prev, { ...userItem, pending: false }])
                   break
                 case "typing":
-                  setItems((prev) => [...prev, { id: assistantId, message: "", role: "assistant", streaming: true }])
+                  setItems((prev) => [...prev, { id: assistantId, content: "", role: "assistant", streaming: true }])
                   break
                 case "final":
                   setItems((prev) =>
-                    prev.map((item) => (item.id === assistantId ? { ...item, message: event.text } : item)),
+                    prev.map((item) => (item.id === assistantId ? { ...item, content: event.text } : item)),
                   )
                   break
                 case "end":
-                  updateItem(assistantId, { streaming: false })
+                  updateAssistant(assistantId, { streaming: false })
                   break
               }
             }
@@ -90,15 +125,19 @@ const useChat = () => {
             ...prev.filter((i) => i.id !== userItem.id),
             { ...userItem, pending: false, error: true },
           ])
+        } finally {
+          setIsPending(false)
         }
       })
     },
-    [addOptimisticItem, updateItem, items],
+    [addOptimisticItem, updateAssistant],
   )
 
   return {
-    messages: optimisticItems,
+    userMessages,
+    assistantMessages,
     sendMessage,
+    isPending,
   }
 }
 
