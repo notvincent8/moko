@@ -28,8 +28,8 @@ const UserBubble = memo(({ message, isLast = false }: UserBubbleProps) => {
       if (!isLast || !bubbleRef.current) return
       const animation = gsap.fromTo(
         bubbleRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+        { opacity: 0, x: 20 },
+        { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" },
       )
 
       return () => {
@@ -42,14 +42,15 @@ const UserBubble = memo(({ message, isLast = false }: UserBubbleProps) => {
   useGSAP(
     () => {
       if (!(isLast && isSent) || !statusRef.current) return
-      const animation = gsap.from(statusRef.current, {
+      const q = gsap.utils.selector(statusRef.current)
+      const animation = gsap.from(q("p"), {
         delay: 0.2,
-        y: 20,
+        x: 10,
         opacity: 0,
         duration: 0.1,
         ease: "power2.inOut",
         onComplete: () => {
-          bubbleRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
+          bubbleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
         },
       })
 
@@ -69,17 +70,16 @@ const UserBubble = memo(({ message, isLast = false }: UserBubbleProps) => {
       >
         <span className={cn("text-foreground", isError && "text-flame")}>{message.content}</span>
       </BubbleBase>
-      {showStatus && (
-        <span
-          ref={statusRef}
-          className={cn(
-            "text-[10px] pr-1 select-none",
-            isError ? "text-flame/80 cursor-pointer hover:text-flame" : "text-muted-foreground/60",
-          )}
-        >
-          {isError ? "Retry" : "Sent"}
-        </span>
-      )}
+      <span
+        ref={statusRef}
+        aria-hidden={!showStatus}
+        className={cn(
+          "text-[10px] pr-1 select-none relative",
+          isError ? "text-flame/80 cursor-pointer hover:text-flame" : "text-muted-foreground/60",
+        )}
+      >
+        {showStatus && <p className="relative">{isError ? "Retry" : "Sent"}</p>}
+      </span>
     </div>
   )
 })
