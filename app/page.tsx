@@ -1,17 +1,20 @@
 "use client"
+import { Root, Trigger } from "@radix-ui/react-dialog"
+
 import "@/lib/gsap-init"
 
 import { CounterClockwiseClockIcon } from "@radix-ui/react-icons"
-import { useCallback, useState } from "react"
+import { Activity, useCallback, useState } from "react"
 import ChatInput from "@/app/component/ChatInput"
 import { AssistantStream, UserStream } from "@/app/component/ChatStream"
 import Entity from "@/app/component/Entity"
+import History from "@/app/component/History"
 import useChat from "@/app/hook/useChat"
 import { cn } from "@/lib/utils"
 
 export default function Home() {
   const { userMessages, assistantMessages, sendMessage, isPending } = useChat()
-  const [, setHistoryOpen] = useState(false)
+  const [isShowingHistory, setIsShowingHistory] = useState(true)
 
   const handleChatInputSend = (message: string | undefined) => {
     if (isPending) return
@@ -24,46 +27,33 @@ export default function Home() {
     sendMessage(message)
   }
 
-  const handleOpenHistory = useCallback(() => {
-    setHistoryOpen(true)
-    // TODO: Open history modal with merged timeline
-    // Access both userMessages and assistantMessages here
-  }, [])
-
-  const hasMessages = userMessages.length > 0 || assistantMessages.length > 0
-
   return (
-    <>
-      {/* Main stage - Entity centered with responses above */}
+    <Root open={isShowingHistory} onOpenChange={setIsShowingHistory}>
+      <Activity mode={isShowingHistory ? "visible" : "hidden"}>
+        <History isOpen={isShowingHistory} />
+      </Activity>
       <main className="flex-1 flex flex-col items-center justify-center overflow-hidden container-chat">
         <div className="w-full max-w-lg mb-6 sm:mb-8">
           <AssistantStream messages={assistantMessages} />
         </div>
         <Entity />
       </main>
-
       <footer className="shrink-0  flex flex-col items-end">
         <UserStream messages={userMessages} />
         <div className="w-full justify-end flex items-center gap-3 safe-area-bottom container-chat border-t border-border">
-          <button
-            type="button"
-            onClick={handleOpenHistory}
-            disabled={!hasMessages}
-            aria-label="View chat history"
-            className={cn(
-              "shrink-0 p-2 rounded-lg transition-all duration-200",
-              "border border-transparent",
-              hasMessages
-                ? "text-muted-foreground hover:text-foreground hover:bg-surface hover:border-border active:scale-95"
-                : "text-muted-foreground/30 cursor-not-allowed",
-            )}
-          >
-            <CounterClockwiseClockIcon className="w-4 h-4" />
-          </button>
+          <Trigger asChild>
+            <button
+              type="button"
+              aria-label="View chat history"
+              className="shrink-0 p-2 rounded-lg transition-all duration-200 border border-transparent hover:text-foreground hover:bg-surface hover:border-border active:scale-95"
+            >
+              <CounterClockwiseClockIcon className="w-4 h-4" />
+            </button>
+          </Trigger>
 
           <ChatInput onSend={handleChatInputSend} disabled={isPending} />
         </div>
       </footer>
-    </>
+    </Root>
   )
 }
