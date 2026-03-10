@@ -1,4 +1,4 @@
-import { memo } from "react"
+import { memo, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import BubbleBase from "./BubbleBase"
 
@@ -15,7 +15,7 @@ type AssistantBubbleProps = {
 }
 
 const TypingIndicator = () => (
-  <span className="inline-flex items-baseline gap-[2px] text-muted-foreground text-sm">
+  <span className="inline-flex items-baseline gap-0.5 text-muted-foreground text-sm">
     <span className="animate-pulse [animation-duration:1s]">·</span>
     <span className="animate-pulse [animation-duration:1s] [animation-delay:150ms]">·</span>
     <span className="animate-pulse [animation-duration:1s] [animation-delay:300ms]">·</span>
@@ -34,7 +34,7 @@ const AssistantBubble = memo(({ message, className }: AssistantBubbleProps) => {
     <BubbleBase
       aria-label={isTyping ? "Typing" : `Assistant said: ${message.content}`}
       busy={message.streaming}
-      className={cn("mr-auto border-l-2 border-flame/50 rounded-none rounded-r-lg bg-surface-elevated pl-3", className)}
+      className={cn("rounded-none bg-surface-elevated", className)}
     >
       {isTyping ? <TypingIndicator /> : <p className="text-foreground">{message.content}</p>}
     </BubbleBase>

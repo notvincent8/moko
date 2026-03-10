@@ -44,10 +44,13 @@ const UserBubble = memo(({ message, isLast = false }: UserBubbleProps) => {
       if (!(isLast && isSent) || !statusRef.current) return
       const animation = gsap.from(statusRef.current, {
         delay: 0.2,
-        y: -20,
+        y: 20,
         opacity: 0,
         duration: 0.1,
         ease: "power2.inOut",
+        onComplete: () => {
+          bubbleRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
+        },
       })
 
       return () => {

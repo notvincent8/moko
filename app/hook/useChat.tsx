@@ -2,6 +2,76 @@ import { startTransition, useCallback, useMemo, useOptimistic, useState } from "
 import type { AssistantMessage } from "@/app/component/bubbles/AssistantBubble"
 import type { UserMessage } from "@/app/component/bubbles/UserBubble"
 
+const mockUserMessages: UserMessage[] = [
+  { id: crypto.randomUUID(), content: "Hello, how are you?", pending: false },
+  { id: crypto.randomUUID(), content: "What's the weather like today?", pending: false },
+  { id: crypto.randomUUID(), content: "Can you tell me a joke?", pending: false },
+  { id: crypto.randomUUID(), content: "Ok!", pending: false },
+  { id: crypto.randomUUID(), content: "What's your favorite color?", pending: false },
+  { id: crypto.randomUUID(), content: "Tell me something interesting", pending: false },
+  { id: crypto.randomUUID(), content: "How does gravity work?", pending: false },
+  { id: crypto.randomUUID(), content: "That's cool, thanks!", pending: false },
+  { id: crypto.randomUUID(), content: "Can you help me with a recipe?", pending: false },
+  { id: crypto.randomUUID(), content: "I'm thinking pasta tonight", pending: false, error: true },
+  { id: crypto.randomUUID(), content: "Do you like music?", pending: false },
+  { id: crypto.randomUUID(), content: "What about anime?", pending: false },
+  { id: crypto.randomUUID(), content: "Haha nice one", pending: false },
+  { id: crypto.randomUUID(), content: "Goodnight!", pending: false },
+  { id: crypto.randomUUID(), content: "This is the more recent message", pending: true },
+]
+
+const mockAssistantMessages: AssistantMessage[] = [
+  { id: crypto.randomUUID(), content: "Hey! I'm doing great, thanks for asking. How about you?", streaming: false },
+  {
+    id: crypto.randomUUID(),
+    content: "I don't have access to real-time weather, but I hope it's sunny where you are!",
+    streaming: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    content: "Why do programmers prefer dark mode? Because light attracts bugs.",
+    streaming: false,
+  },
+  { id: crypto.randomUUID(), content: "Glad you liked it!", streaming: false },
+  {
+    id: crypto.randomUUID(),
+    content: "I'd say somewhere between deep violet and midnight blue. Very dramatic, I know.",
+    streaming: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    content: "Octopuses have three hearts and blue blood. Two pump blood to the gills, one to the rest of the body.",
+    streaming: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    content:
+      "Gravity is the curvature of spacetime caused by mass. The more massive an object, the more it warps the fabric around it.",
+    streaming: false,
+  },
+  { id: crypto.randomUUID(), content: "Anytime!", streaming: false },
+  { id: crypto.randomUUID(), content: "Of course! What kind of cuisine are you in the mood for?", streaming: false },
+  {
+    id: crypto.randomUUID(),
+    content:
+      "Great choice. A simple aglio e olio is hard to beat — garlic, olive oil, chili flakes, done in 15 minutes.",
+    streaming: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    content: "I find music fascinating. There's something beautiful about how sound waves can carry so much emotion.",
+    streaming: false,
+  },
+  {
+    id: crypto.randomUUID(),
+    content: "Big fan. If you haven't seen Steins;Gate, I highly recommend it — time travel done right.",
+    streaming: false,
+  },
+  { id: crypto.randomUUID(), content: "I try my best 😄", streaming: false },
+  { id: crypto.randomUUID(), content: "Goodnight! Sleep well, talk soon.", streaming: false },
+  { id: crypto.randomUUID(), content: "Sure, go ahead! I'm all ears…", streaming: true },
+]
+
 type BaseItem<TRole extends string, TStatus extends string> = {
   id: string
   content: string
@@ -15,7 +85,7 @@ type Item = UserItem | AssistantItem
 
 type AssistantUpdates = Partial<Pick<AssistantItem, "content" | "streaming" | "error">>
 
-const useChat = () => {
+const useChat = (isMockData: boolean = false) => {
   const [items, setItems] = useState<Item[]>([])
   const [isPending, setIsPending] = useState<boolean>(false)
   const [optimisticItems, addOptimisticItem] = useOptimistic<Item[], Item>(items, (current, newItem) => {
@@ -134,11 +204,20 @@ const useChat = () => {
   )
 
   return {
-    userMessages,
-    assistantMessages,
+    userMessages: isMockData ? mockUserMessages : userMessages,
+    assistantMessages: isMockData ? mockAssistantMessages : assistantMessages,
     sendMessage,
     isPending,
   }
 }
 
 export default useChat
+
+// Option A: Vercel Edge Config + Rate Limit (if on Vercel)
+// Use @vercel/edge rate limiting - simple, managed.
+//
+// Option B: In-memory rate limiting (simple, works anywhere)
+// Good for dev/small scale. Resets on redeploy.
+//
+// Option C: Redis/Upstash rate limiting (production)
+// Persistent, distributed, handles scale.
