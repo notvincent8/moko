@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Syne, Plus_Jakarta_Sans } from "next/font/google"
+import { Plus_Jakarta_Sans, Syne } from "next/font/google"
 import type { ReactNode } from "react"
 import "./globals.css"
 
@@ -32,9 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} ${syne.variable} font-sans`}>
-        <main className="relative flex h-screen w-full">{children}</main>
-      </body>
+      <body className={`${jakarta.variable} ${syne.variable} font-sans`}>{children}</body>
     </html>
   )
 }

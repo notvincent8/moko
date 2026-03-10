@@ -41,47 +41,47 @@
   /* These are set via Next.js CSS variables from layout.tsx */
 
   /* Core Palette - Light Mode */
-  --cream: #FFF8E5;
-  --cream-deep: #F0E6D3;
+  --cream: #fff8e5;
+  --cream-deep: #f0e6d3;
   --ink: #000000;
-  --ink-soft: #1C1C1C;
-  --flame: #FF7300;
-  --flame-hover: #E56600;
-  --flame-glow: #FF8F33;
+  --ink-soft: #1c1c1c;
+  --flame: #ff7300;
+  --flame-hover: #e56600;
+  --flame-glow: #ff8f33;
 
   /* Semantic - Light Mode */
   --background: var(--cream);
   --foreground: var(--ink);
-  --muted: #5C5C5C;
-  --muted-foreground: #7A7A7A;
-  --border: rgba(0, 0, 0, 0.10);
+  --muted: #5c5c5c;
+  --muted-foreground: #7a7a7a;
+  --border: rgba(0, 0, 0, 0.1);
   --border-strong: rgba(0, 0, 0, 0.22);
 
   /* Surface layers - Light */
   --surface: rgba(0, 0, 0, 0.03);
-  --surface-elevated: #FFFFFF;
+  --surface-elevated: #ffffff;
 
   /* Accent */
   --accent: var(--flame);
-  --accent-foreground: #FFFFFF;
+  --accent-foreground: #ffffff;
 }
 
 .dark {
   /* Core Palette - Dark Mode */
-  --cream: #FFF8E5;
-  --cream-deep: #E8DCCA;
+  --cream: #fff8e5;
+  --cream-deep: #e8dcca;
   --ink: #000000;
-  --ink-soft: #0D0D0D;
-  --flame: #FF7300;
-  --flame-hover: #FF8829;
-  --flame-glow: #FFA050;
+  --ink-soft: #0d0d0d;
+  --flame: #ff7300;
+  --flame-hover: #ff8829;
+  --flame-glow: #ffa050;
 
   /* Semantic - Dark Mode */
   --background: var(--ink);
   --foreground: var(--cream);
-  --muted: #A0A0A0;
-  --muted-foreground: #6E6E6E;
-  --border: rgba(255, 248, 229, 0.10);
+  --muted: #a0a0a0;
+  --muted-foreground: #6e6e6e;
+  --border: rgba(255, 248, 229, 0.1);
   --border-strong: rgba(255, 248, 229, 0.22);
 
   /* Surface layers - Dark */
@@ -94,16 +94,33 @@
 }
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     @apply bg-background text-foreground font-sans antialiased;
   }
 
   /* Headlines use display font */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display), system-ui, sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -117,12 +134,43 @@
   /* Selection styling */
   ::selection {
     background-color: var(--flame);
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   /* Focus ring with flame accent */
   :focus-visible {
     outline: 2px solid var(--flame);
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Layout spacing */
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .container-chat {
+    --chat-padding: clamp(0.75rem, 3vw, 1.5rem);
+    padding-inline: var(--chat-padding);
+    padding-top: var(--chat-padding);
+  }
+
+  /* Auto-expanding textarea */
+  .input-auto-expand {
+    field-sizing: content;
+    min-height: 2.5rem;
+    max-height: 8rem;
+    overflow-y: auto;
+    resize: none;
+  }
+
+  /* Hidden scrollbar utility */
+  .scrollbar-none {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
   }
 }
