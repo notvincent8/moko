@@ -17,7 +17,7 @@ import useChat from "@/app/hook/useChat"
 import { usePIIWarning } from "@/app/hook/usePIIWarning"
 
 export default function Home() {
-  const { userMessages, assistantMessages, sendMessage, isPending } = useChat()
+  const { userMessages, assistantMessages, sendMessage, isPending, history } = useChat()
   const [isShowingHistory, setIsShowingHistory] = useState(false)
 
   const { piiWarning, checkAndSend, sendAnyway, sendAndDismissForever, cancelWarning } = usePIIWarning(sendMessage)
@@ -31,7 +31,7 @@ export default function Home() {
     <ConsentGate>
       <Root open={isShowingHistory} onOpenChange={setIsShowingHistory}>
         <Activity mode={isShowingHistory ? "visible" : "hidden"}>
-          <History isOpen={isShowingHistory} />
+          <History isOpen={isShowingHistory} historyMessages={history} />
         </Activity>
 
         <header className="shrink-0 flex justify-center pt-3 pb-1">

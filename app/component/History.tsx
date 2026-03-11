@@ -1,7 +1,12 @@
-import { Close, Content, Overlay, Portal, Title } from "@radix-ui/react-dialog"
+import { Close, Content, Description, Overlay, Portal, Title } from "@radix-ui/react-dialog"
 import { Cross2Icon } from "@radix-ui/react-icons"
+import type { Item } from "@/app/hook/useChat"
 
-const History = ({ isOpen }: { isOpen: boolean }) => {
+type HistoryProps = {
+  isOpen: boolean
+  historyMessages: Item[]
+}
+const History = ({ isOpen, historyMessages }: HistoryProps) => {
   return (
     <Portal>
       <Overlay
@@ -13,7 +18,20 @@ const History = ({ isOpen }: { isOpen: boolean }) => {
         className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-125 -translate-x-1/2 -translate-y-1/2 rounded-md bg-surface-elevated p-6.25 shadow-(--shadow-6) focus:outline-none data-[state=open]:animate-dialog-content-show"
       >
         <Title className="m-0 text-[17px] font-medium text-mauve12">History</Title>
-
+        <Description hidden>History</Description>
+        <div className="mt-4 max-h-[60vh] overflow-y-auto">
+          {historyMessages.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No history yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {historyMessages.map((entry) => (
+                <li key={entry.id} className="rounded bg-gray3 p-3">
+                  <p className="text-sm text-foreground">{entry.content}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <div className="mt-6.25 flex justify-end">
           <button
             type="button"
