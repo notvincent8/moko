@@ -4,11 +4,12 @@ import { Root, Trigger } from "@radix-ui/react-dialog"
 import "@/lib/gsap-init"
 
 import { CounterClockwiseClockIcon } from "@radix-ui/react-icons"
-import { Activity, useCallback, useState } from "react"
 import Link from "next/link"
 import { Activity, useState } from "react"
 import ChatInput from "@/app/component/ChatInput"
 import { AssistantStream, UserStream } from "@/app/component/ChatStream"
+import ConsentGate from "@/app/component/ConsentGate"
+import Disclaimer from "@/app/component/Disclaimer"
 import Entity from "@/app/component/Entity"
 import History from "@/app/component/History"
 import PIIPreviewBubble from "@/app/component/PIIPreviewBubble"
@@ -27,19 +28,7 @@ export default function Home() {
   }
 
   return (
-    <Root open={isShowingHistory} onOpenChange={setIsShowingHistory}>
-      <Activity mode={isShowingHistory ? "visible" : "hidden"}>
-        <History isOpen={isShowingHistory} />
-      </Activity>
-      <main className="flex-1 flex flex-col items-center justify-center overflow-hidden container-chat">
-        <div className="w-full max-w-lg mb-6 sm:mb-8">
-          <AssistantStream messages={assistantMessages} />
-        </div>
-        <Entity />
-      </main>
-      <footer className="shrink-0  flex flex-col items-end">
-        <UserStream messages={userMessages} />
-        <div className="w-full justify-end flex items-center gap-3 safe-area-bottom container-chat border-t border-border">
+    <ConsentGate>
       <Root open={isShowingHistory} onOpenChange={setIsShowingHistory}>
         <Activity mode={isShowingHistory ? "visible" : "hidden"}>
           <History isOpen={isShowingHistory} />
@@ -96,8 +85,7 @@ export default function Home() {
 
           <ChatInput onSend={handleChatInputSend} disabled={isPending} />
         </div>
-      </footer>
-    </Root>
       </Root>
+    </ConsentGate>
   )
 }
