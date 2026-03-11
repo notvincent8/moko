@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Plus_Jakarta_Sans, Syne } from "next/font/google"
 import type { ReactNode } from "react"
+import { DebugProvider } from "@/app/debug"
 import "./globals.css"
 
 const syne = Syne({
@@ -32,7 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} ${syne.variable} font-sans`}>{children}</body>
+      <body className={`${jakarta.variable} ${syne.variable} font-sans`}>
+        <DebugProvider>{children}</DebugProvider>
+      </body>
     </html>
   )
 }

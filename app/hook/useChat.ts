@@ -1,6 +1,8 @@
-import { startTransition, useCallback, useMemo, useOptimistic, useState } from "react"
+import { startTransition, useCallback, useMemo, useOptimistic, useRef, useState } from "react"
 import type { AssistantMessage } from "@/app/component/bubbles/AssistantBubble"
 import type { UserMessage } from "@/app/component/bubbles/UserBubble"
+import type { DebugConfig } from "@/app/debug/config"
+import { generateMockResponse, generatePopulatedMessages, sleep } from "@/app/debug/mockGenerator"
 
 type BaseItem<TRole extends string, TStatus extends string> = {
   id: string
@@ -15,15 +17,31 @@ export type Item = UserItem | AssistantItem
 
 type AssistantUpdates = Partial<Pick<AssistantItem, "content" | "streaming" | "error">>
 
-const useChat = () => {
+type UseChatOptions = {
+  debugConfig?: DebugConfig
+}
+
+type FailedUserMessage = {
+  id: string
+  content: string
+}
+
+const useChat = (options?: UseChatOptions) => {
+  const debugConfig = options?.debugConfig
+  const isDebugMode = debugConfig?.enabled ?? false
+
   const [items, setItems] = useState<Item[]>([])
   const [isPending, setIsPending] = useState<boolean>(false)
+  const [failedUserMessage, setFailedUserMessage] = useState<FailedUserMessage | null>(null)
+  const [failedAssistantId, setFailedAssistantId] = useState<string | null>(null)
   const [optimisticItems, addOptimisticItem] = useOptimistic<Item[], Item>(items, (current, newItem) => {
     if (current.some((item) => item.id === newItem.id)) {
       return current
     }
     return [...current, newItem]
   })
+
+  const sendMessageRef = useRef<(message: string) => void>(() => {})
 
   const userMessages = useMemo<UserMessage[]>(
     () =>
@@ -41,12 +59,14 @@ const useChat = () => {
     [optimisticItems],
   )
 
-  const getCurrentHistory = useCallback(() => {
-    return items.filter(
-      (item) =>
-        !item.error && !(item.role === "user" && item.pending) && !(item.role === "assistant" && item.streaming),
-    )
-  }, [items])
+  const getCurrentHistory = useCallback(
+    () =>
+      items.filter(
+        (item) =>
+          !item.error && !(item.role === "user" && item.pending) && !(item.role === "assistant" && item.streaming),
+      ),
+    [items],
+  )
 
   const updateAssistant = useCallback((id: string, updates: AssistantUpdates) => {
     setItems((prev) =>
@@ -54,8 +74,122 @@ const useChat = () => {
     )
   }, [])
 
-  const sendMessage = useCallback(
+  const populateMessages = useCallback(() => {
+    if (!debugConfig) return
+    const populated = generatePopulatedMessages(debugConfig.populate.userCount, debugConfig.populate.assistantCount)
+    setItems(populated)
+  }, [debugConfig])
+
+  const clearMessages = useCallback(() => {
+    setItems([])
+    setFailedUserMessage(null)
+    setFailedAssistantId(null)
+  }, [])
+
+  const retryUserMessage = useCallback(() => {
+    if (!failedUserMessage) return
+
+    const messageContent = failedUserMessage.content
+    const messageId = failedUserMessage.id
+
+    setItems((prev) => prev.filter((i) => i.id !== messageId))
+    setFailedUserMessage(null)
+
+    sendMessageRef.current(messageContent)
+  }, [failedUserMessage])
+
+  const cancelUserMessage = useCallback(() => {
+    if (!failedUserMessage) return
+
+    setItems((prev) => prev.filter((i) => i.id !== failedUserMessage.id))
+    setFailedUserMessage(null)
+  }, [failedUserMessage])
+
+  const dismissAssistantError = useCallback(() => {
+    if (!failedAssistantId) return
+
+    setItems((prev) => prev.filter((i) => i.id !== failedAssistantId))
+    setFailedAssistantId(null)
+  }, [failedAssistantId])
+
+  const sendDebugMessage = useCallback(
+    async (message: string) => {
+      if (!debugConfig) return
+
+      if (failedAssistantId) {
+        setItems((prev) => prev.filter((i) => i.id !== failedAssistantId))
+        setFailedAssistantId(null)
+      }
+
+      setIsPending(true)
+
+      const userItem: UserItem = {
+        id: crypto.randomUUID(),
+        content: message,
+        role: "user",
+        pending: true,
+      }
+
+      const assistantId = crypto.randomUUID()
+
+      startTransition(async () => {
+        addOptimisticItem(userItem)
+
+        await sleep(debugConfig.latency.user)
+
+        if (debugConfig.errors.userSendFails) {
+          setItems((prev) => [
+            ...prev.filter((i) => i.id !== userItem.id),
+            { ...userItem, pending: false, error: true },
+          ])
+          setFailedUserMessage({ id: userItem.id, content: message })
+          setIsPending(false)
+          return
+        }
+
+        setItems((prev) => [...prev, { ...userItem, pending: false }])
+
+        await sleep(debugConfig.latency.assistant)
+
+        setItems((prev) => [...prev, { id: assistantId, content: "", role: "assistant", streaming: true }])
+
+        if (debugConfig.errors.assistantFails) {
+          await sleep(500)
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === assistantId ? { ...item, content: "", streaming: false, error: true } : item,
+            ),
+          )
+          setFailedAssistantId(assistantId)
+          setIsPending(false)
+          return
+        }
+
+        const mockResponse = generateMockResponse()
+        const typingDelay = debugConfig.latency.typing
+
+        for (let i = 0; i <= mockResponse.length; i++) {
+          const partial = mockResponse.slice(0, i)
+          setItems((prev) => prev.map((item) => (item.id === assistantId ? { ...item, content: partial } : item)))
+          if (i < mockResponse.length) {
+            await sleep(typingDelay)
+          }
+        }
+
+        updateAssistant(assistantId, { streaming: false })
+        setIsPending(false)
+      })
+    },
+    [debugConfig, addOptimisticItem, updateAssistant, failedAssistantId],
+  )
+
+  const sendRealMessage = useCallback(
     (message: string) => {
+      if (failedAssistantId) {
+        setItems((prev) => prev.filter((i) => i.id !== failedAssistantId))
+        setFailedAssistantId(null)
+      }
+
       setIsPending(true)
 
       const userItem: UserItem = {
@@ -91,7 +225,7 @@ const useChat = () => {
           })
 
           if (!response.ok || !response.body) {
-            throw new Error("Network response was not ok")
+            throw new Error("Request failed")
           }
 
           const reader = response.body.getReader()
@@ -131,30 +265,47 @@ const useChat = () => {
             ...prev.filter((i) => i.id !== userItem.id),
             { ...userItem, pending: false, error: true },
           ])
+          setFailedUserMessage({ id: userItem.id, content: message })
         } finally {
           setIsPending(false)
         }
       })
     },
-    [addOptimisticItem, updateAssistant],
+    [addOptimisticItem, updateAssistant, failedAssistantId],
   )
 
+  const sendMessage = useCallback(
+    (message: string) => {
+      if (isDebugMode) {
+        sendDebugMessage(message).catch()
+      } else {
+        sendRealMessage(message)
+      }
+    },
+    [isDebugMode, sendDebugMessage, sendRealMessage],
+  )
+
+  sendMessageRef.current = sendMessage
+
+  const hasUserError = failedUserMessage !== null
+  const hasAssistantError = failedAssistantId !== null
+
   return {
-    userMessages: userMessages,
-    assistantMessages: assistantMessages,
+    userMessages,
+    assistantMessages,
     history: getCurrentHistory(),
     sendMessage,
     isPending,
+    hasUserError,
+    hasAssistantError,
+    failedUserMessage,
+    retryUserMessage,
+    cancelUserMessage,
+    dismissAssistantError,
+    populateMessages,
+    clearMessages,
+    isDebugMode,
   }
 }
 
 export default useChat
-
-// Option A: Vercel Edge Config + Rate Limit (if on Vercel)
-// Use @vercel/edge rate limiting - simple, managed.
-//
-// Option B: In-memory rate limiting (simple, works anywhere)
-// Good for dev/small scale. Resets on redeploy.
-//
-// Option C: Redis/Upstash rate limiting (production)
-// Persistent, distributed, handles scale.

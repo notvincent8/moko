@@ -13,17 +13,35 @@ import Disclaimer from "@/app/component/Disclaimer"
 import Entity from "@/app/component/Entity"
 import History from "@/app/component/History"
 import PIIPreviewBubble from "@/app/component/PIIPreviewBubble"
+import { DebugPanel, useDebugConfig } from "@/app/debug"
 import useChat from "@/app/hook/useChat"
 import { usePIIWarning } from "@/app/hook/usePIIWarning"
 
 export default function Home() {
-  const { userMessages, assistantMessages, sendMessage, isPending, history } = useChat()
+  const debugConfig = useDebugConfig()
+  const {
+    userMessages,
+    assistantMessages,
+    sendMessage,
+    isPending,
+    history,
+    populateMessages,
+    clearMessages,
+    hasUserError,
+    hasAssistantError,
+    retryUserMessage,
+    cancelUserMessage,
+    dismissAssistantError,
+  } = useChat({ debugConfig })
   const [isShowingHistory, setIsShowingHistory] = useState(false)
 
   const { piiWarning, checkAndSend, sendAnyway, sendAndDismissForever, cancelWarning } = usePIIWarning(sendMessage)
 
   const handleChatInputSend = (message: string) => {
-    if (isPending) return
+    if (isPending || hasUserError) return
+    if (hasAssistantError) {
+      dismissAssistantError()
+    }
     checkAndSend(message)
   }
 
@@ -41,12 +59,17 @@ export default function Home() {
         <main className="flex-1 flex flex-col items-center justify-center overflow-hidden container-chat">
           <div className="w-full max-w-lg mb-6 sm:mb-8">
             <AssistantStream messages={assistantMessages} />
+            {hasAssistantError && (
+              <p className="mt-2 text-[11px] text-muted-foreground/60 text-center">
+                Something went wrong. Send a new message to retry.
+              </p>
+            )}
           </div>
           <Entity />
         </main>
 
         <section className="shrink-0 flex flex-col items-end">
-          <UserStream messages={userMessages} />
+          <UserStream messages={userMessages} onRetry={retryUserMessage} onCancel={cancelUserMessage} />
 
           {piiWarning && (
             <div className="w-full flex justify-end">
@@ -83,9 +106,11 @@ export default function Home() {
             </button>
           </Trigger>
 
-          <ChatInput onSend={handleChatInputSend} disabled={isPending} />
+          <ChatInput onSend={handleChatInputSend} disabled={isPending || hasUserError} />
         </div>
       </Root>
+
+      <DebugPanel onPopulate={populateMessages} onClear={clearMessages} />
     </ConsentGate>
   )
 }

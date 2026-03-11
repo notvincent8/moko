@@ -14,9 +14,11 @@ export type UserMessage = {
 type UserBubbleProps = {
   message: UserMessage
   isLast?: boolean
+  onRetry?: () => void
+  onCancel?: () => void
 }
 
-const UserBubble = memo(({ message, isLast = false }: UserBubbleProps) => {
+const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBubbleProps) => {
   const bubbleRef = useRef<HTMLDivElement>(null)
   const statusRef = useRef<HTMLSpanElement>(null)
   const isError = message.error
@@ -66,19 +68,34 @@ const UserBubble = memo(({ message, isLast = false }: UserBubbleProps) => {
       <BubbleBase
         aria-label={`You said: ${message.content}`}
         busy={message.pending}
-        className={cn("ml-auto", isError ? "bg-flame/8 border border-flame/20" : "bg-cream-deep/60 dark:bg-surface")}
+        className={cn(
+          "ml-auto",
+          isError ? "bg-flame/8 border border-flame/20" : "bg-cream-deep/60 dark:bg-surface",
+          !isSent && !isError && "animate-pulse",
+        )}
       >
         <span className={cn("text-foreground", isError && "text-flame")}>{message.content}</span>
       </BubbleBase>
       <span
         ref={statusRef}
         aria-hidden={!showStatus}
-        className={cn(
-          "text-[10px] pr-1 select-none relative",
-          isError ? "text-flame/80 cursor-pointer hover:text-flame" : "text-muted-foreground/60",
-        )}
+        className={cn("text-[10px] pr-1 select-none relative", isError ? "text-flame/80" : "text-muted-foreground/60")}
       >
-        {showStatus && <p className="relative">{isError ? "Retry" : "Sent"}</p>}
+        {showStatus && !isError && <p className="relative">Sent</p>}
+        {showStatus && isError && (
+          <span className="flex items-center gap-2">
+            {onCancel && (
+              <button type="button" onClick={onCancel} className="hover:text-muted-foreground transition-colors">
+                Cancel
+              </button>
+            )}
+            {onRetry && (
+              <button type="button" onClick={onRetry} className="hover:text-flame transition-colors">
+                Retry
+              </button>
+            )}
+          </span>
+        )}
       </span>
     </div>
   )

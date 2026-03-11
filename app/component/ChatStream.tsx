@@ -4,11 +4,18 @@ import UserBubble, { type UserMessage } from "@/app/component/bubbles/UserBubble
 import { cn } from "@/lib/utils"
 
 type ChatStreamProps =
-  | { type: "user"; messages: UserMessage[]; maxHeight?: string; className?: string }
+  | {
+      type: "user"
+      messages: UserMessage[]
+      maxHeight?: string
+      className?: string
+      failedMessageId?: string
+      onRetry?: () => void
+      onCancel?: () => void
+    }
   | { type: "assistant"; messages: AssistantMessage[]; maxHeight?: string; className?: string }
 
 const ChatStream = memo((props: ChatStreamProps) => {
-
   const reversedMessages = useMemo(() => props.messages.toReversed(), [props.messages])
 
   if (props.messages.length === 0) return null
@@ -23,11 +30,15 @@ const ChatStream = memo((props: ChatStreamProps) => {
     >
       {props.type === "user"
         ? reversedMessages.map((message, index) => (
-            <UserBubble key={message.id} message={message as UserMessage} isLast={index === 0} />
+            <UserBubble
+              key={message.id}
+              message={message as UserMessage}
+              isLast={index === 0}
+              onRetry={props.onRetry}
+              onCancel={props.onCancel}
+            />
           ))
-        : reversedMessages.map((message) => (
-            <AssistantBubble key={message.id} message={message as AssistantMessage} />
-          ))}
+        : reversedMessages.map((message) => <AssistantBubble key={message.id} message={message as AssistantMessage} />)}
     </div>
   )
 })
