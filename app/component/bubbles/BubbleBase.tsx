@@ -13,8 +13,7 @@ const BubbleBase = ({ busy, className, children, ...props }: BubbleBaseProps) =>
       aria-atomic="true"
       aria-busy={busy}
       {...props}
-      className={cn("rounded-lg p-4 max-w-xs", className)}
-      style={{ contentVisibility: "auto" }}
+      className={cn("rounded-lg p-4 max-w-100 w-full ml-auto wrap-break-word", className)}
     >
       {children}
     </article>

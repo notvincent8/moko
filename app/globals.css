@@ -34,6 +34,17 @@
   /* Surface layers */
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
+
+  --animate-textarea-pulse: textarea-pulse 2s ease-in-out infinite;
+
+  @keyframes textarea-pulse {
+    0% {
+      box-shadow: 0 0 0 0 var(--flame);
+    }
+    100% {
+      box-shadow: 0 0 1px 5px rgba(255, 115, 0, 0);
+    }
+  }
 }
 
 :root {
@@ -168,6 +179,7 @@
     max-height: 8rem;
     overflow-y: auto;
     resize: none;
+    will-change: true;
   }
 
   /* Hidden scrollbar utility */

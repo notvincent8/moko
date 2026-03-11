@@ -69,12 +69,11 @@ const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBub
         aria-label={`You said: ${message.content}`}
         busy={message.pending}
         className={cn(
-          "ml-auto",
           isError ? "bg-flame/8 border border-flame/20" : "bg-cream-deep/60 dark:bg-surface",
           !isSent && !isError && "animate-pulse",
         )}
       >
-        <span className={cn("text-foreground", isError && "text-flame")}>{message.content}</span>
+        <span className={cn("text-foreground ", isError && "text-flame")}>{message.content}</span>
       </BubbleBase>
       <span
         ref={statusRef}
