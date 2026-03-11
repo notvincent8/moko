@@ -74,8 +74,8 @@ export default function AboutPage() {
 
           <h3 className="font-semibold mb-2">Ce qu'Anthropic reçoit</h3>
           <p className="text-foreground/90 leading-relaxed mb-4">
-            Tes messages sont envoyés à l'API d'Anthropic pour générer les réponses. Anthropic peut traiter et
-            conserver ces données selon sa{" "}
+            Tes messages sont envoyés à l'API d'Anthropic pour générer les réponses. Anthropic peut traiter et conserver
+            ces données selon sa{" "}
             <a
               href="https://www.anthropic.com/privacy"
               target="_blank"
@@ -113,7 +113,9 @@ export default function AboutPage() {
           <ul className="space-y-3 text-foreground/90">
             <li className="flex gap-3">
               <span className="text-flame shrink-0">~</span>
-              <span>Ne partage jamais d'informations personnelles sensibles (nom complet, adresse, téléphone, etc.)</span>
+              <span>
+                Ne partage jamais d'informations personnelles sensibles (nom complet, adresse, téléphone, etc.)
+              </span>
             </li>
             <li className="flex gap-3">
               <span className="text-flame shrink-0">~</span>

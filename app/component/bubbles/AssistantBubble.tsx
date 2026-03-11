@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react"
+import { memo } from "react"
 import { cn } from "@/lib/utils"
 import BubbleBase from "./BubbleBase"
 

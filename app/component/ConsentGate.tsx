@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, type ReactNode } from "react"
+import { type ReactNode, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
 const CONSENT_KEY = "moko_consent"
@@ -123,8 +123,8 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
               ~
             </span>
             <span>
-              <strong>Ce n'est pas un professionnel.</strong> Moko ne remplace pas un médecin, psychologue ou tout
-              autre expert.
+              <strong>Ce n'est pas un professionnel.</strong> Moko ne remplace pas un médecin, psychologue ou tout autre
+              expert.
             </span>
           </li>
           <li className="flex gap-3">
