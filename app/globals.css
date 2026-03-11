@@ -156,6 +156,11 @@
     padding-top: var(--chat-padding);
   }
 
+  .container-chat-no-top {
+    --chat-padding: clamp(0.75rem, 3vw, 1.5rem);
+    padding-inline: var(--chat-padding);
+  }
+
   /* Auto-expanding textarea */
   .input-auto-expand {
     field-sizing: content;

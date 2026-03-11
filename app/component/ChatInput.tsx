@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 type ChatInputProps = {
   disabled?: boolean
-  onSend: (message: string | undefined) => void
+  onSend: (message: string) => void
 }
 
 const ChatInput = ({ disabled = false, onSend }: ChatInputProps) => {
@@ -28,7 +28,7 @@ const ChatInput = ({ disabled = false, onSend }: ChatInputProps) => {
   return (
     <div
       className={cn(
-        "w-full min-w-[12rem] max-w-md",
+        "w-full min-w-48 max-w-md",
         "flex items-end gap-2 bg-surface-elevated border border-border rounded-xl px-3 py-2 transition-colors",
         disabled ? "opacity-60 cursor-not-allowed" : "focus-within:border-flame/40",
       )}
