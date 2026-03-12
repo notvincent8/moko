@@ -2,6 +2,10 @@ import { NextResponse } from "next/server"
 import client from "@/lib/anthropic"
 import { getEntitySystemPrompt } from "@/lib/mokoPrompt"
 
+export const runtime = "nodejs"
+
+export const dynamic = "force-dynamic"
+
 // Max message length (prevent huge payloads)
 const MAX_MESSAGE_LENGTH = 2000
 

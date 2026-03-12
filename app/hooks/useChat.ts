@@ -28,10 +28,15 @@ type FailedUserMessage = {
   content: string
 }
 
+export type RateLimitError = {
+  type: "burst" | "daily"
+  retryAfter: number
+} | null
+
 const useChat = (options?: UseChatOptions) => {
   const debugConfig = options?.debugConfig
   const isDebugMode = debugConfig?.enabled ?? false
-
+  const [rateLimitError, setRateLimitError] = useState<RateLimitError>(null)
   const [items, setItems] = useState<Item[]>([])
   const [isPending, setIsPending] = useState<boolean>(false)
   const [failedUserMessage, setFailedUserMessage] = useState<FailedUserMessage | null>(null)
@@ -96,6 +101,7 @@ const useChat = (options?: UseChatOptions) => {
 
     setItems((prev) => prev.filter((i) => i.id !== messageId))
     setFailedUserMessage(null)
+    setRateLimitError(null)
 
     sendMessageRef.current(messageContent)
   }, [failedUserMessage])
@@ -105,6 +111,7 @@ const useChat = (options?: UseChatOptions) => {
 
     setItems((prev) => prev.filter((i) => i.id !== failedUserMessage.id))
     setFailedUserMessage(null)
+    setRateLimitError(null)
   }, [failedUserMessage])
 
   const dismissAssistantError = useCallback(() => {
@@ -113,6 +120,10 @@ const useChat = (options?: UseChatOptions) => {
     setItems((prev) => prev.filter((i) => i.id !== failedAssistantId))
     setFailedAssistantId(null)
   }, [failedAssistantId])
+
+  const clearRateLimitError = useCallback(() => {
+    setRateLimitError(null)
+  }, [])
 
   const sendDebugMessage = useCallback(
     async (message: string) => {
@@ -215,7 +226,6 @@ const useChat = (options?: UseChatOptions) => {
           }))
 
         try {
-          console.log(history)
           const response = await fetch("/api/chat", {
             method: "POST",
             body: JSON.stringify({
@@ -226,6 +236,23 @@ const useChat = (options?: UseChatOptions) => {
               "Content-Type": "application/json",
             },
           })
+
+          if (response.status === 429) {
+            const errorData = await response.json()
+            const limitType = errorData.limitType === "daily" ? "daily" : "burst"
+
+            setRateLimitError({
+              type: limitType,
+              retryAfter: errorData.retryAfter,
+            })
+            setItems((prev) => [
+              ...prev.filter((i) => i.id !== userItem.id),
+              { ...userItem, pending: false, error: true },
+            ])
+            setFailedUserMessage({ id: userItem.id, content: message })
+            setIsPending(false)
+            return
+          }
 
           if (!response.ok || !response.body) {
             throw new Error("Request failed")
@@ -247,6 +274,7 @@ const useChat = (options?: UseChatOptions) => {
               const event = JSON.parse(line)
               switch (event.type) {
                 case "start":
+                  setRateLimitError(null)
                   setItems((prev) => [...prev, { ...userItem, pending: false, sentAt: new Date() }])
                   break
                 case "typing":
@@ -305,6 +333,7 @@ const useChat = (options?: UseChatOptions) => {
     retryUserMessage,
     cancelUserMessage,
     dismissAssistantError,
+    rateLimitError,
     populateMessages,
     clearMessages,
     isDebugMode,

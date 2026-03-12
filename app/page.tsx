@@ -13,6 +13,7 @@ import Disclaimer from "@/app/components/Disclaimer"
 import Entity from "@/app/components/Entity"
 import History from "@/app/components/History"
 import PIIPreviewBubble from "@/app/components/PIIPreviewBubble"
+import RateLimitErrorNotice from "@/app/components/RateLimitErrorNotice"
 import { DebugPanel, useDebugConfig } from "@/app/debug"
 import useChat from "@/app/hooks/useChat"
 import { usePIIWarning } from "@/app/hooks/usePIIWarning"
@@ -31,6 +32,7 @@ export default function Home() {
     hasAssistantError,
     retryUserMessage,
     cancelUserMessage,
+    rateLimitError,
     dismissAssistantError,
   } = useChat({ debugConfig })
   const [isShowingHistory, setIsShowingHistory] = useState(false)
@@ -68,9 +70,9 @@ export default function Home() {
           <Entity />
         </main>
 
-        <section className="shrink-0 flex flex-col items-end">
+        <section className="shrink-0 flex flex-col items-end gap-3">
           <UserStream messages={userMessages} onRetry={retryUserMessage} onCancel={cancelUserMessage} />
-
+          <RateLimitErrorNotice rateLimitError={rateLimitError} />
           {piiWarning && (
             <div className="w-full flex justify-end">
               <PIIPreviewBubble
@@ -114,3 +116,21 @@ export default function Home() {
     </ConsentGate>
   )
 }
+
+// TODO : Rate Limit
+// TODO : Limit number of messages per session/day
+// TODO : Update ChatStream Design : Better boundaries, Moko bubble
+// TODO : Moko morphing : svg polygon, idle, typing, happy, sad, surprised, etc.
+// TODO : Enhance Moko personality, mood, based on conversation context
+// TODO : GSAP animation, consent gate, message transitions, Moko morphing
+// TODO : Export history
+// TODO : Split useChat Hook (too long), useMessage, useChatStream, useOptimisticChat
+// TODO : Error Boundary Component (take the one form atelier boilerplate?)
+// TODO : Optimise CSS/HTML/Fonts (preload)
+// TODO : Check accessibility (aria labels, keyboard navigation, color contrast, screen reader)
+// TODO : Extract long tailwind classe
+// .history-item {
+//    @apply group relative py-3 px-4 rounded-lg border border-transparent;
+//    @apply hover:bg-surface hover:border-border;
+//    @apply [content-visibility:auto] [contain-intrinsic-size:auto_72px];
+// }
