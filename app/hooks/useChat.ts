@@ -121,10 +121,6 @@ const useChat = (options?: UseChatOptions) => {
     setFailedAssistantId(null)
   }, [failedAssistantId])
 
-  const clearRateLimitError = useCallback(() => {
-    setRateLimitError(null)
-  }, [])
-
   const sendDebugMessage = useCallback(
     async (message: string) => {
       if (!debugConfig) return
