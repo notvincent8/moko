@@ -1,6 +1,6 @@
 import { useGSAP } from "@gsap/react"
 import { gsap } from "gsap"
-import { memo, useRef } from "react"
+import { forwardRef, memo, useRef } from "react"
 import { cn } from "@/lib/utils"
 import BubbleBase from "./BubbleBase"
 
@@ -19,11 +19,51 @@ type UserBubbleProps = {
   onCancel?: () => void
 }
 
+type StatusProps = Pick<UserBubbleProps, "onRetry" | "onCancel"> & {
+  isError: boolean
+  showStatus: boolean
+}
+const Status = memo(
+  forwardRef<HTMLSpanElement, StatusProps>(({ isError, onRetry, onCancel, showStatus }, ref) => {
+    if (!showStatus) {
+      return <span ref={ref} aria-hidden="true" className="text-[10px] pr-1 select-none" />
+    }
+
+    return (
+      <span
+        ref={ref}
+        className={cn("text-[10px] pr-1 select-none relative", isError ? "text-flame/80" : "text-muted-foreground/60")}
+      >
+        {isError ? (
+          <span className="flex items-center gap-2">
+            {onCancel && (
+              <button type="button" onClick={onCancel} className="hover:text-muted-foreground transition-colors">
+                Cancel
+              </button>
+            )}
+            {onRetry && (
+              <button type="button" onClick={onRetry} className="hover:text-flame transition-colors">
+                Retry
+              </button>
+            )}
+          </span>
+        ) : (
+          <p className="relative">Sent</p>
+        )}
+      </span>
+    )
+  }),
+)
+
+Status.displayName = "Status"
+
 const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBubbleProps) => {
   const bubbleRef = useRef<HTMLDivElement>(null)
   const statusRef = useRef<HTMLSpanElement>(null)
-  const isError = message.error
-  const isSent = !message.pending && !isError
+
+  const isError = message.error === true
+  const isPending = message.pending
+  const isSent = !isPending && !isError
   const showStatus = isError || (isLast && isSent)
 
   useGSAP(
@@ -77,32 +117,12 @@ const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBub
         debug={message.debug}
         className={cn(
           isError ? "bg-flame/8 border border-flame/20" : "bg-cream-deep/60 dark:bg-surface",
-          !isSent && !isError && "animate-pulse",
+          isPending && "animate-pulse",
         )}
       >
         <span className={cn("text-foreground ", isError && "text-flame")}>{message.content}</span>
       </BubbleBase>
-      <span
-        ref={statusRef}
-        aria-hidden={!showStatus}
-        className={cn("text-[10px] pr-1 select-none relative", isError ? "text-flame/80" : "text-muted-foreground/60")}
-      >
-        {showStatus && !isError && <p className="relative">Sent</p>}
-        {showStatus && isError && (
-          <span className="flex items-center gap-2">
-            {onCancel && (
-              <button type="button" onClick={onCancel} className="hover:text-muted-foreground transition-colors">
-                Cancel
-              </button>
-            )}
-            {onRetry && (
-              <button type="button" onClick={onRetry} className="hover:text-flame transition-colors">
-                Retry
-              </button>
-            )}
-          </span>
-        )}
-      </span>
+      <Status ref={statusRef} showStatus={showStatus} isError={isError} onRetry={onRetry} onCancel={onCancel} />
     </div>
   )
 })
