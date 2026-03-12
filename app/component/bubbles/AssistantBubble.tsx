@@ -7,6 +7,7 @@ export type AssistantMessage = {
   content: string
   streaming: boolean
   error?: boolean
+  debug?: boolean
 }
 
 type AssistantBubbleProps = {
@@ -35,6 +36,7 @@ const AssistantBubble = memo(({ message, className }: AssistantBubbleProps) => {
       aria-label={isTyping ? "Typing" : `Assistant said: ${message.content}`}
       busy={message.streaming}
       className={cn("rounded-none bg-surface-elevated", className)}
+      debug={message.debug}
     >
       {isTyping ? <TypingIndicator /> : <p className="text-foreground">{message.content}</p>}
     </BubbleBase>

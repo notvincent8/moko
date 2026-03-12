@@ -10,6 +10,7 @@ type BaseItem<TRole extends string, TStatus extends string> = {
   sentAt?: Date
   role: TRole
   error?: boolean
+  debug?: boolean
 } & Record<TStatus, boolean>
 
 type UserItem = BaseItem<"user", "pending">
@@ -48,7 +49,7 @@ const useChat = (options?: UseChatOptions) => {
     () =>
       optimisticItems
         .filter((m): m is UserItem => m.role === "user")
-        .map(({ id, content, pending, error }) => ({ id, content, pending, error })),
+        .map(({ id, content, pending, error, debug }) => ({ id, content, pending, error, debug })),
     [optimisticItems],
   )
 
@@ -56,7 +57,7 @@ const useChat = (options?: UseChatOptions) => {
     () =>
       optimisticItems
         .filter((m): m is AssistantItem => m.role === "assistant")
-        .map(({ id, content, streaming, error }) => ({ id, content, streaming, error })),
+        .map(({ id, content, streaming, error, debug }) => ({ id, content, streaming, error, debug })),
     [optimisticItems],
   )
 
@@ -78,7 +79,7 @@ const useChat = (options?: UseChatOptions) => {
   const populateMessages = useCallback(() => {
     if (!debugConfig) return
     const populated = generatePopulatedMessages(debugConfig.populate.userCount, debugConfig.populate.assistantCount)
-    setItems(populated)
+    setItems(populated.map((p) => ({ ...p, debug: true })))
   }, [debugConfig])
 
   const clearMessages = useCallback(() => {
@@ -129,6 +130,7 @@ const useChat = (options?: UseChatOptions) => {
         content: message,
         role: "user",
         pending: true,
+        debug: true,
       }
 
       const assistantId = crypto.randomUUID()
@@ -152,7 +154,7 @@ const useChat = (options?: UseChatOptions) => {
 
         await sleep(debugConfig.latency.assistant)
 
-        setItems((prev) => [...prev, { id: assistantId, content: "", role: "assistant", streaming: true }])
+        setItems((prev) => [...prev, { id: assistantId, content: "", role: "assistant", streaming: true, debug: true }])
 
         if (debugConfig.errors.assistantFails) {
           await sleep(500)
@@ -205,15 +207,15 @@ const useChat = (options?: UseChatOptions) => {
       startTransition(async () => {
         addOptimisticItem(userItem)
 
-        let history: { content: string; role: "user" | "assistant" }[] = []
-        setItems((prev) => {
-          history = prev
-            .filter((item) => !item.error && !(item.role === "user" && item.pending))
-            .map(({ content, role }) => ({ content, role }))
-          return prev
-        })
+        const history: { content: string; role: "user" | "assistant" }[] = getCurrentHistory()
+          .filter((i) => !i.debug)
+          .map((item) => ({
+            content: item.content,
+            role: item.role,
+          }))
 
         try {
+          console.log(history)
           const response = await fetch("/api/chat", {
             method: "POST",
             body: JSON.stringify({
@@ -272,7 +274,7 @@ const useChat = (options?: UseChatOptions) => {
         }
       })
     },
-    [addOptimisticItem, updateAssistant, failedAssistantId],
+    [addOptimisticItem, updateAssistant, failedAssistantId, getCurrentHistory],
   )
 
   const sendMessage = useCallback(

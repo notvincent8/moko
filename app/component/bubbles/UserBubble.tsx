@@ -9,6 +9,7 @@ export type UserMessage = {
   content: string
   pending: boolean
   error?: boolean
+  debug?: boolean
 }
 
 type UserBubbleProps = {
@@ -73,6 +74,7 @@ const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBub
       <BubbleBase
         aria-label={`You said: ${message.content}`}
         busy={message.pending}
+        debug={message.debug}
         className={cn(
           isError ? "bg-flame/8 border border-flame/20" : "bg-cream-deep/60 dark:bg-surface",
           !isSent && !isError && "animate-pulse",
