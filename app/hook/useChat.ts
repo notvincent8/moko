@@ -7,6 +7,7 @@ import { generateMockResponse, generatePopulatedMessages, sleep } from "@/app/de
 type BaseItem<TRole extends string, TStatus extends string> = {
   id: string
   content: string
+  sentAt?: Date
   role: TRole
   error?: boolean
 } & Record<TStatus, boolean>
@@ -15,7 +16,7 @@ type UserItem = BaseItem<"user", "pending">
 type AssistantItem = BaseItem<"assistant", "streaming">
 export type Item = UserItem | AssistantItem
 
-type AssistantUpdates = Partial<Pick<AssistantItem, "content" | "streaming" | "error">>
+type AssistantUpdates = Partial<Pick<AssistantItem, "content" | "streaming" | "error" | "sentAt">>
 
 type UseChatOptions = {
   debugConfig?: DebugConfig
@@ -147,7 +148,7 @@ const useChat = (options?: UseChatOptions) => {
           return
         }
 
-        setItems((prev) => [...prev, { ...userItem, pending: false }])
+        setItems((prev) => [...prev, { ...userItem, pending: false, sentAt: new Date() }])
 
         await sleep(debugConfig.latency.assistant)
 
@@ -176,7 +177,7 @@ const useChat = (options?: UseChatOptions) => {
           }
         }
 
-        updateAssistant(assistantId, { streaming: false })
+        updateAssistant(assistantId, { streaming: false, sentAt: new Date() })
         setIsPending(false)
       })
     },
@@ -244,7 +245,7 @@ const useChat = (options?: UseChatOptions) => {
               const event = JSON.parse(line)
               switch (event.type) {
                 case "start":
-                  setItems((prev) => [...prev, { ...userItem, pending: false }])
+                  setItems((prev) => [...prev, { ...userItem, pending: false, sentAt: new Date() }])
                   break
                 case "typing":
                   setItems((prev) => [...prev, { id: assistantId, content: "", role: "assistant", streaming: true }])
@@ -255,7 +256,7 @@ const useChat = (options?: UseChatOptions) => {
                   )
                   break
                 case "end":
-                  updateAssistant(assistantId, { streaming: false })
+                  updateAssistant(assistantId, { streaming: false, sentAt: new Date() })
                   break
               }
             }

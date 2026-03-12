@@ -26,6 +26,7 @@ export const generatePopulatedMessages = (userCount: number, assistantCount: num
         content: generateMockUserMessage(),
         role: "user",
         pending: false,
+        sentAt: new Date(),
       })
     }
 
@@ -35,6 +36,7 @@ export const generatePopulatedMessages = (userCount: number, assistantCount: num
         content: generateMockResponse(),
         role: "assistant",
         streaming: false,
+        sentAt: new Date(),
       })
     }
   }
