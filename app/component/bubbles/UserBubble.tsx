@@ -31,7 +31,15 @@ const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBub
       const animation = gsap.fromTo(
         bubbleRef.current,
         { opacity: 0, x: 20 },
-        { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.3,
+          ease: "power2.out",
+          onComplete: () => {
+            bubbleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+          },
+        },
       )
 
       return () => {
@@ -51,9 +59,6 @@ const UserBubble = memo(({ message, isLast = false, onRetry, onCancel }: UserBub
         opacity: 0,
         duration: 0.1,
         ease: "power2.inOut",
-        onComplete: () => {
-          bubbleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-        },
       })
 
       return () => {
