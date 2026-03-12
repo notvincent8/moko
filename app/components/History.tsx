@@ -2,8 +2,8 @@ import * as Dialog from "@radix-ui/react-dialog"
 import { CopyIcon, Cross2Icon } from "@radix-ui/react-icons"
 import * as Toggle from "@radix-ui/react-toggle"
 import { type MouseEvent, memo, useEffect, useState } from "react"
-import type { Item } from "@/app/hook/useChat"
-import { formatHistoryDate } from "@/lib/format-date"
+import type { Item } from "@/app/hooks/useChat"
+import { formatHistoryDate } from "@/lib/formatDate"
 import { cn } from "@/lib/utils"
 
 type HistoryProps = {

@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import type { PIIMatch } from "@/lib/pii-detect"
+import type { PIIMatch } from "@/lib/piiDetect"
 import { cn } from "@/lib/utils"
 
 type PIIPreviewBubbleProps = {

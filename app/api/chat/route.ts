@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import client from "@/lib/anthropic"
-import { getEntitySystemPrompt } from "@/lib/moko-prompt"
+import { getEntitySystemPrompt } from "@/lib/mokoPrompt"
 
 // Max message length (prevent huge payloads)
 const MAX_MESSAGE_LENGTH = 2000

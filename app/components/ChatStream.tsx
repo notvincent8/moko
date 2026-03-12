@@ -1,6 +1,6 @@
 import { memo, useMemo } from "react"
-import AssistantBubble, { type AssistantMessage } from "@/app/component/bubbles/AssistantBubble"
-import UserBubble, { type UserMessage } from "@/app/component/bubbles/UserBubble"
+import AssistantBubble, { type AssistantMessage } from "@/app/components/bubbles/AssistantBubble"
+import UserBubble, { type UserMessage } from "@/app/components/bubbles/UserBubble"
 import { cn } from "@/lib/utils"
 
 type ChatStreamProps =

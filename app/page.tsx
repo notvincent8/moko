@@ -1,21 +1,21 @@
 "use client"
 import { Root, Trigger } from "@radix-ui/react-dialog"
 
-import "@/lib/gsap-init"
+import "@/lib/gsapInit"
 
 import { CounterClockwiseClockIcon } from "@radix-ui/react-icons"
 import Link from "next/link"
 import { Activity, useState } from "react"
-import ChatInput from "@/app/component/ChatInput"
-import { AssistantStream, UserStream } from "@/app/component/ChatStream"
-import ConsentGate from "@/app/component/ConsentGate"
-import Disclaimer from "@/app/component/Disclaimer"
-import Entity from "@/app/component/Entity"
-import History from "@/app/component/History"
-import PIIPreviewBubble from "@/app/component/PIIPreviewBubble"
+import ChatInput from "@/app/components/ChatInput"
+import { AssistantStream, UserStream } from "@/app/components/ChatStream"
+import ConsentGate from "@/app/components/ConsentGate"
+import Disclaimer from "@/app/components/Disclaimer"
+import Entity from "@/app/components/Entity"
+import History from "@/app/components/History"
+import PIIPreviewBubble from "@/app/components/PIIPreviewBubble"
 import { DebugPanel, useDebugConfig } from "@/app/debug"
-import useChat from "@/app/hook/useChat"
-import { usePIIWarning } from "@/app/hook/usePIIWarning"
+import useChat from "@/app/hooks/useChat"
+import { usePIIWarning } from "@/app/hooks/usePIIWarning"
 
 export default function Home() {
   const debugConfig = useDebugConfig()

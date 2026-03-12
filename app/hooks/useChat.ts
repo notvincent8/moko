@@ -1,6 +1,6 @@
 import { startTransition, useCallback, useMemo, useOptimistic, useRef, useState } from "react"
-import type { AssistantMessage } from "@/app/component/bubbles/AssistantBubble"
-import type { UserMessage } from "@/app/component/bubbles/UserBubble"
+import type { AssistantMessage } from "@/app/components/bubbles/AssistantBubble"
+import type { UserMessage } from "@/app/components/bubbles/UserBubble"
 import type { DebugConfig } from "@/app/debug/config"
 import { generateMockResponse, generatePopulatedMessages, sleep } from "@/app/debug/mockGenerator"
 

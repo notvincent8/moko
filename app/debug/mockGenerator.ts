@@ -1,4 +1,4 @@
-import type { Item } from "@/app/hook/useChat"
+import type { Item } from "@/app/hooks/useChat"
 import { MOCK_RESPONSES, MOCK_USER_MESSAGES, type MockResponseType } from "./config"
 
 const pickRandom = <T>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]

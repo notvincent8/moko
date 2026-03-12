@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { detectSensitivePII, type PIIMatch } from "@/lib/pii-detect"
+import { detectSensitivePII, type PIIMatch } from "@/lib/piiDetect"
 
 const PII_DISMISS_KEY = "moko_pii_dismiss"
 
