@@ -1,8 +1,7 @@
 "use client"
-import { Root, Trigger } from "@radix-ui/react-dialog"
 
 import "@/lib/gsapInit"
-
+import { Root, Trigger } from "@radix-ui/react-dialog"
 import { CounterClockwiseClockIcon } from "@radix-ui/react-icons"
 import Link from "next/link"
 import { Activity, useState } from "react"
@@ -11,7 +10,7 @@ import { AssistantStream, UserStream } from "@/app/components/ChatStream"
 import ConsentGate from "@/app/components/ConsentGate"
 import Disclaimer from "@/app/components/Disclaimer"
 import Entity from "@/app/components/Entity"
-import History from "@/app/components/History"
+import History from "@/app/components/history/History"
 import PIIPreviewBubble from "@/app/components/PIIPreviewBubble"
 import RateLimitErrorNotice from "@/app/components/RateLimitErrorNotice"
 import { DebugPanel, useDebugConfig } from "@/app/debug"
@@ -49,7 +48,7 @@ export default function Home() {
 
   return (
     <ConsentGate>
-      <Root open={isShowingHistory} onOpenChange={setIsShowingHistory}>
+      <Root open={isShowingHistory} onOpenChange={(open) => setIsShowingHistory(open)}>
         <Activity mode={isShowingHistory ? "visible" : "hidden"}>
           <History isOpen={isShowingHistory} historyMessages={history} />
         </Activity>
@@ -111,14 +110,11 @@ export default function Home() {
           <ChatInput onSend={handleChatInputSend} disabled={isPending || hasUserError} />
         </div>
       </Root>
-
       <DebugPanel onPopulate={populateMessages} onClear={clearMessages} />
     </ConsentGate>
   )
 }
 
-// TODO : Rate Limit
-// TODO : Limit number of messages per session/day
 // TODO : Update ChatStream Design : Better boundaries, Moko bubble
 // TODO : Moko morphing : svg polygon, idle, typing, happy, sad, surprised, etc.
 // TODO : Enhance Moko personality, mood, based on conversation context

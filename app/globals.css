@@ -190,4 +190,19 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none; /* Chrome/Safari/Opera */
   }
+
+  .toolbar-button {
+    position: relative;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+    color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .toolbar-button:hover {
+    color: var(--foreground);
+    background-color: var(--surface);
+  }
 }
