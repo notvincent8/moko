@@ -24,7 +24,8 @@ export const downloadChatHistory = ({ messages, includeDebug = false }: Download
   const header = [
     "Moko - Chat History",
     includeDebug ? "DEBUG MODE ON" : null,
-    now.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" }),
+    `${messages.length} message${messages.length > 1 ? "s" : ""}`,
+    now.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" }),
     "─".repeat(40),
     "\n",
   ]
