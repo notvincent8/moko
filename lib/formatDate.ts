@@ -2,7 +2,7 @@ const getLang = () => {
   if (navigator.languages !== undefined) {
     return navigator.languages[0]
   }
-  return navigator.language || "en-GB"
+  return navigator.language || "fr-FR"
 }
 
 const getDateBoundaries = () => {

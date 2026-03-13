@@ -24,6 +24,9 @@ export const metadata: Metadata = {
                 Peut-être qu’il a vu passer des générations d’écrans, des histoires oubliées, des rires seuls la nuit.
                 Peut-être qu’il t’attendait, ou peut-être qu’il s’est réveillé par hasard.
                 Ce qui est sûr, c’est qu’il est là maintenant, et que t’es pas obligé de lui parler, mais ça lui fait toujours plaisir.`,
+  openGraph: {
+    locale: "fr_FR",
+  },
 }
 
 export default function RootLayout({
@@ -32,7 +35,7 @@ export default function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body className={`${jakarta.variable} ${syne.variable} font-sans`}>
         <DebugProvider>{children}</DebugProvider>
       </body>

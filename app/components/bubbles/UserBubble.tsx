@@ -38,17 +38,17 @@ const Status = memo(
           <span className="flex items-center gap-2">
             {onCancel && (
               <button type="button" onClick={onCancel} className="hover:text-muted-foreground transition-colors">
-                Cancel
+                Annuler
               </button>
             )}
             {onRetry && (
               <button type="button" onClick={onRetry} className="hover:text-flame transition-colors">
-                Retry
+                Réessayer
               </button>
             )}
           </span>
         ) : (
-          <p className="relative">Sent</p>
+          <p className="relative">Envoyé</p>
         )}
       </span>
     )

@@ -31,7 +31,6 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
         }
       }
       setHasConsented(false)
-      // Trigger entrance animation
       requestAnimationFrame(() => setIsVisible(true))
     } catch {
       setHasConsented(false)
@@ -49,17 +48,14 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
     setTimeout(() => setHasConsented(true), 500)
   }
 
-  // Loading state - show nothing to prevent flash
   if (hasConsented === null) {
     return null
   }
 
-  // Already consented - show app
   if (hasConsented) {
     return <>{children}</>
   }
 
-  // Show consent gate
   return (
     <div
       className={cn(
@@ -67,7 +63,6 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
         isExiting ? "opacity-0" : "opacity-100",
       )}
     >
-      {/* Moko entity - the mysterious black box */}
       <div
         className={cn(
           "mb-8 transition-all duration-500 ease-out",
@@ -78,7 +73,6 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
         <div className="w-6 h-12 bg-ink dark:bg-cream rounded-sm" aria-hidden="true" />
       </div>
 
-      {/* Title */}
       <h1
         className={cn(
           "font-display text-3xl sm:text-4xl font-bold text-foreground mb-2 tracking-tight transition-all duration-500 ease-out",
@@ -99,7 +93,6 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
         La mystérieuse boîte noire
       </p>
 
-      {/* Consent card */}
       <div
         className={cn(
           "w-full max-w-md bg-surface-elevated border border-border rounded-lg p-6 shadow-lg transition-all duration-500 ease-out",
@@ -115,7 +108,7 @@ const ConsentGate = ({ children }: ConsentGateProps) => {
               ~
             </span>
             <span>
-              <strong>Moko est une IA</strong>, pas un humain. Les réponses sont générées automatiquement.
+              <strong>Moko est une IA</strong>, pas un humain, ses réponses sont générées automatiquement.
             </span>
           </li>
           <li className="flex gap-3">

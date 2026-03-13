@@ -58,7 +58,7 @@ const ChatInput = ({ disabled = false, onSend }: ChatInputProps) => {
           "text-foreground placeholder:text-muted-foreground/60 text-base leading-relaxed",
           "disabled:cursor-not-allowed ",
         )}
-        placeholder={disabled ? "Waiting..." : "Say something..."}
+        placeholder={disabled ? "En attente..." : "Écris quelque chose..."}
       />
 
       <button

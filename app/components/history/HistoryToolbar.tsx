@@ -48,7 +48,7 @@ const DebugToggle = memo(
       <Toggle.Root
         pressed={showDebug}
         onPressedChange={onPressedChange}
-        aria-label={showDebug ? "Hide debug messages" : "Show debug messages"}
+        aria-label={showDebug ? "Masquer les messages debug" : "Afficher les messages debug"}
         data-state={showDebug ? "on" : "off"}
         className="toolbar-button data-[state=on]:bg-flame/10 data-[state=on]:border-flame data-[state=on]:text-flame"
       >
@@ -69,7 +69,7 @@ const DownloadButton = memo(({ onClick }: { onClick?: () => void }) => {
   )
 
   return (
-    <MokoTooltip label="Download">
+    <MokoTooltip label="Télécharger">
       <button type="button" onClick={handleClick} aria-label="Download history" className="toolbar-button">
         <DownloadIcon className="w-4 h-4" />
       </button>
@@ -87,7 +87,6 @@ const HistoryToolbar = ({ debug, onDownload, className }: HistoryToolbarProps) =
           "bg-surface-elevated",
           "border border-border",
           "shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
-          // Responsive: horizontal on mobile, vertical on desktop
           "flex-row sm:flex-col",
           className,
         )}

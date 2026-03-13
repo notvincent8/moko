@@ -248,7 +248,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
           top: buttonPos.y,
           cursor: isDraggingButton ? "grabbing" : "grab",
         }}
-        aria-label="Toggle debug panel"
+        aria-label="Ouvrir le panel de débogage"
       >
         <GearIcon className="w-5 h-5 pointer-events-none" />
       </button>
@@ -264,7 +264,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
         >
           <div
             role="toolbar"
-            aria-label="Drag to move panel"
+            aria-label="Déplacer le panel"
             onMouseDown={handlePanelMouseDown}
             onTouchStart={handlePanelTouchStart}
             className="shrink-0 bg-surface-elevated border-b border-border p-3 flex items-center justify-between select-none"
@@ -308,7 +308,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
             {config.enabled && (
               <>
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Quick Actions</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Actions rapides</p>
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -328,11 +328,13 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Populate Count</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    Nombre de messages
+                  </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label htmlFor="user-count" className="text-xs text-muted-foreground">
-                        User
+                        Utilisateur
                       </label>
                       <input
                         id="user-count"
@@ -362,11 +364,11 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Latency (ms)</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Latence (ms)</p>
                   <div className="space-y-2">
                     <div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">User send</span>
+                        <span className="text-muted-foreground">Délai d'envoi</span>
                         <span>{config.latency.user}ms</span>
                       </div>
                       <input
@@ -381,7 +383,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                     </div>
                     <div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">Assistant start</span>
+                        <span className="text-muted-foreground">Délai de réponse</span>
                         <span>{config.latency.assistant}ms</span>
                       </div>
                       <input
@@ -396,8 +398,8 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                     </div>
                     <div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">Typing speed</span>
-                        <span>{config.latency.typing}ms/char</span>
+                        <span className="text-muted-foreground">Vitesse de frappe</span>
+                        <span>{config.latency.typing}ms/car</span>
                       </div>
                       <input
                         type="range"
@@ -413,7 +415,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Error Triggers</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Erreurs simulées</p>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -422,7 +424,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                         onChange={(e) => setError("userSendFails", e.target.checked)}
                         className="w-4 h-4 rounded border-border"
                       />
-                      <span className="text-sm">User send fails</span>
+                      <span className="text-sm">Envoi échoue</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -431,7 +433,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                         onChange={(e) => setError("assistantFails", e.target.checked)}
                         className="w-4 h-4 rounded border-border"
                       />
-                      <span className="text-sm">Assistant response fails</span>
+                      <span className="text-sm">Réponse échoue</span>
                     </label>
                   </div>
                 </div>
@@ -441,7 +443,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
                   onClick={resetConfig}
                   className="w-full px-3 py-2 text-sm text-muted-foreground border border-border rounded hover:bg-surface transition-colors"
                 >
-                  Reset to Defaults
+                  Remettre à zéro
                 </button>
               </>
             )}
@@ -452,7 +454,7 @@ const DebugPanel = ({ onPopulate, onClear }: DebugPanelProps) => {
               <span
                 className={`w-2 h-2 rounded-full ${config.enabled ? "bg-amber-500 animate-pulse" : "bg-gray-400"}`}
               />
-              <span className="text-muted-foreground">{config.enabled ? "Debug mode active" : "Production mode"}</span>
+              <span className="text-muted-foreground">{config.enabled ? "Debug mode actif" : "Mode production"}</span>
             </div>
           </div>
         </div>

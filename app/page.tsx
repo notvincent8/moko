@@ -62,7 +62,7 @@ export default function Home() {
             <AssistantStream messages={assistantMessages} />
             {hasAssistantError && (
               <p className="mt-2 text-[11px] text-muted-foreground/60 text-center">
-                Something went wrong. Send a new message to retry.
+                Oups, une erreur est survenue lors de la génération de la réponse. Veuillez réessayer.
               </p>
             )}
           </div>
@@ -115,11 +115,18 @@ export default function Home() {
   )
 }
 
+// MVP
+// TODO : - Mentions légales (new route or in /about)
+// TODO : - Real github contact
+// TODO : - Accessibility : aria, keyboard navigation, color contrast, screen reader, fix lang to full french : run lighthouse
+// TODO : - Fix PIIMatch not checking
+// TODO : - Fix responsiveness (footer, history, chat stream max height, entity component on mobile)
+// TODO : - Last Assistant message standout
+
 // TODO : Update ChatStream Design : Better boundaries, Moko bubble
 // TODO : Moko morphing : svg polygon, idle, typing, happy, sad, surprised, etc.
 // TODO : Enhance Moko personality, mood, based on conversation context
 // TODO : GSAP animation, consent gate, message transitions, Moko morphing
-// TODO : Export history
 // TODO : Split useChat Hook (too long), useMessage, useChatStream, useOptimisticChat
 // TODO : Error Boundary Component (take the one form atelier boilerplate?)
 // TODO : Optimise CSS/HTML/Fonts (preload)
